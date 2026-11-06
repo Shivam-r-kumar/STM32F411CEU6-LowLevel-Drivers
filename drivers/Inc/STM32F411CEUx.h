@@ -2,9 +2,35 @@
 #define INC_STM32F411CEUX_H_
 
 #include  <stdint.h>
+#include <stddef.h>
+
+// CPU BASED ADDRESS, STRUCTURES AND FUCTIONS
+
+#define NVIC_BASEADDR 						0xE000E100U
+
+typedef struct {
+	volatile uint32_t ISER[8];       // 0x000
+	uint32_t RESERVED0[24];
+	volatile uint32_t ICER[8];       // 0x080
+	uint32_t RESERVED1[24];
+	volatile uint32_t ISPR[8];       // 0x100
+	uint32_t RESERVED2[24];
+	volatile uint32_t ICPR[8];       // 0x180
+	uint32_t RESERVED3[24];
+	volatile uint32_t IABR[8];       // 0x200
+	uint32_t RESERVED4[56];
+	volatile uint8_t IPR[240];       // 0x300
+	uint32_t RESERVED5[644];
+	volatile uint32_t STIR;          // 0xE00
+
+} NVIC_RegDef_t;
+
+#define NVIC						((NVIC_RegDef_t*)NVIC_BASEADDR)
 
 // SOME GENERIC MACROS
 
+#define FLAG_SET 							1
+#define FLAG_RESET							0
 #define ENABLE 								1
 #define DISABLE 							0
 #define SET 								ENABLE
@@ -202,9 +228,12 @@ typedef struct {
 
 // Macros to Reset GPIOx Peripheral
 
-#define GPIOA_REG_RESET()       do { (RCC->AHB1RSTR |= (1 << 0)); (RCC->AHB1RSTR &= ~(1 << 0)); } while(0)
-#define GPIOB_REG_RESET()       do { (RCC->AHB1RSTR |= (1 << 1)); (RCC->AHB1RSTR &= ~(1 << 1)); } while(0)
-#define GPIOC_REG_RESET()       do { (RCC->AHB1RSTR |= (1 << 2)); (RCC->AHB1RSTR &= ~(1 << 2)); } while(0)
+#define GPIOA_REG_RESET()       do { (RCC->AHB1RSTR |= (1 << 0));  (RCC->AHB1RSTR &= ~(1 << 0));  }while(0)
+#define GPIOB_REG_RESET()       do { (RCC->AHB1RSTR |= (1 << 1));  (RCC->AHB1RSTR &= ~(1 << 1));  } while(0)
+#define GPIOC_REG_RESET()       do { (RCC->AHB1RSTR |= (1 << 2));  (RCC->AHB1RSTR &= ~(1 << 2));  } while(0)
+#define SPI1_REG_RESET() 		do { (RCC->AHB2RSTR |= (1 << 12)); (RCC->AHB2RSTR &= ~(1 << 12)); } while(0)
+#define SPI2_REG_RESET()        do { (RCC->AHB1RSTR |= (1 << 14)); (RCC->AHB1RSTR &= ~(1 << 14)); } while(0)
+#define SPI3_REG_RESET() 		do { (RCC->AHB1RSTR |= (1 << 15)); (RCC->AHB1RSTR &= ~(1 << 15)); } while(0)
 
 // Macros for PORT SELECT ON SYSCFG REGISTER
 
@@ -221,7 +250,31 @@ typedef struct {
 #define IRQ_NO_EXTI4				10
 #define IRQ_NO_EXTI5_9				23
 #define IRQ_NO_EXTI10_15			40
+#define IRQ_NO_SPI1					35
+#define IRQ_NO_SPI2					36
+#define IRQ_NO_SPI3					51
 
+// COMMUNICATION PROTOCOL MACROS
+#define SPI1 						((SPI_RegDef_t*)SPI1_BASEADDR)
+#define SPI2 						((SPI_RegDef_t*)SPI2_BASEADDR)
+#define SPI3 						((SPI_RegDef_t*)SPI3_BASEADDR)
 
+// COMMUNICATION PROTOCOL STRUCTURES
+
+// SPI - SERIAL PERIPHERAL INTERFACE
+typedef struct {
+	volatile uint8_t CR1;
+	volatile uint8_t CR2;
+	volatile uint8_t SR;
+	volatile uint8_t DR;
+	volatile uint8_t CRCPR;
+	volatile uint8_t RXCRCR;
+	volatile uint8_t TXCRCR;
+	volatile uint8_t I2SCFGR;
+	volatile uint8_t I2SPR;
+} SPI_RegDef_t;
+
+#include "GPIO_DRIVER.h"
+#include "SPI_DRIVER.h"
 
 #endif

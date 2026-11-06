@@ -21,6 +21,9 @@ void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnorDi) {
 
 // INIT AND DE-INIT
 void GPIO_Init(GPIO_HANDLE_t *pGPIOHandle) {
+	// ENABLE GPIO CLOCK
+	GPIO_PeriClockControl(pGPIOHandle->pGPIOx, ENABLE);
+
 	uint32_t temp = 0;
 	// Configure the mode of gpio pin
 	if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode <= 3) {
@@ -160,6 +163,25 @@ void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber) {
 }
 
 // IRQ CONFIGURATION AND ISR HANDLING
-void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t EnorDi);
-void GPIO_IRQHandling(uint8_t PinNumber);
+void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t Priority, uint8_t EnorDi) {
+	uint8_t reg = IRQNumber / 32;
+	uint8_t bit = IRQNumber % 32;
 
+	if (EnorDi == 1) {
+		NVIC->ISER[reg] |= (1U << bit);
+	} else if (EnorDi == 0) {
+		NVIC->ICER[reg] |= (1U << bit);
+	}
+
+	// COFIGURING PRIORITY REGISTER IN NVIC
+	uint8_t prx = IRQNumber / 4;
+	uint8_t prxSection = IRQNumber % 4;
+
+	NVIC->IPR[prx] |= (Priority << (8 * prxSection + 4));
+}
+
+void GPIO_IRQHandling(uint8_t PinNumber) {
+	if (EXTI->PR & 1 << PinNumber) {
+		EXTI->PR |= (1 << PinNumber);
+	}
+}

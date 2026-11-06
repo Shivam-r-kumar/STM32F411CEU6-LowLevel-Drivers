@@ -21,7 +21,6 @@
 #define GPIO_PIN_14                 14U
 #define GPIO_PIN_15                 15U
 
-
 // GPIO MODES MACROS
 #define GPIO_MODE_INPUT             0U
 #define GPIO_MODE_OUTPUT   		    1U
@@ -64,7 +63,6 @@
 #define GPIO_AF14       14U     // AF14 : Reserved / Not used
 #define GPIO_AF15       15U     // AF15 : EVENTOUT
 
-
 // this is a pin configuration structure for a gpio pin
 typedef struct {
 	uint8_t GPIO_PinNumber;
@@ -76,33 +74,30 @@ typedef struct {
 
 } GPIO_PinConfig_t;
 
-
 // this is a handle structure for a gpio pin
 typedef struct {
-	GPIO_RegDef_t* pGPIOx;  // this holds the base address of the gpio port to which the pin belong
+	GPIO_RegDef_t *pGPIOx; // this holds the base address of the gpio port to which the pin belong
 	GPIO_PinConfig_t GPIO_PinConfig;
 
 } GPIO_HANDLE_t;
 
 // PERIPHERAL CLOCK SETUP
-void GPIO_PeriClockControl(GPIO_RegDef_t* pGPIOx, uint8_t EnorDi);
+void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnorDi);
 
 // INIT AND DE-INIT
-void GPIO_Init(GPIO_HANDLE_t* pGPIOHandle);
-void GPIO_DeInit(GPIO_RegDef_t* pGPIOx);
+void GPIO_Init(GPIO_HANDLE_t *pGPIOHandle);
+void GPIO_DeInit(GPIO_RegDef_t *pGPIOx);
 
 // DATA READ AND WRITE
-uint8_t GPIO_ReadFromInputPin(GPIO_RegDef_t* pGPIOx, uint8_t PinNumber);
-uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t* pGPIOx);
-void GPIO_WriteToOutputPin(GPIO_RegDef_t* pGPIOx, uint8_t PinNumber, uint8_t Value);
-void GPIO_WriteToOutputPort(GPIO_RegDef_t* pGPIOx, uint16_t Value);
-void GPIO_ToggleOutputPin(GPIO_RegDef_t* pGPIOx, uint8_t PinNumber);
+uint8_t GPIO_ReadFromInputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
+uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t *pGPIOx);
+void GPIO_WriteToOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber,
+		uint8_t Value);
+void GPIO_WriteToOutputPort(GPIO_RegDef_t *pGPIOx, uint16_t Value);
+void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber);
 
 // IRQ CONFIGURATION AND ISR HANDLING
-void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t EnorDi);
+void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t Priority, uint8_t EnorDi);
 void GPIO_IRQHandling(uint8_t PinNumber);
-
-
-
 
 #endif
